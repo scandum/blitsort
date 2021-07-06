@@ -41,7 +41,7 @@ Blitsort uses a [trinity rotation](https://github.com/scandum/rotate), which is 
 
 Memory
 ------
-By default blitsort uses 512 elements worth of stack memory. The minimimum stack size on modern systems should be around 8192 KB.
+By default blitsort uses 512 elements worth of stack memory.
 
 The minimum memory requirement for blitsort is 32 elements of stack memory, it can be configured to use sqrt(n) memory.
 
