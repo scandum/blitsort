@@ -43,13 +43,13 @@ Memory
 ------
 By default blitsort uses 512 elements worth of stack memory. The minimimum stack size on modern systems should be around 8192 KB.
 
-The minimum memory requirement for blitsort is 32 elements of stack memory.
+The minimum memory requirement for blitsort is 32 elements of stack memory, it can be configured to use sqrt(n) memory.
 
 Performance
 -----------
 Blitsort has exceptional performance due to the quad swap, monobound binary search, and trinity rotation.
 
-Blitsort's performance is similar to that of quadsort as long as the auxiliary memory is greater or equal to the square root of the array being sorted, which comes out at 262,144 elements with the default stack of 512 elements.
+Blitsort's performance is similar to that of quadsort as long as the auxiliary memory is greater or equal to the square root of the array being sorted, which comes out at 262,144 elements with the default stack of 512 elements. Performance on larger arrays degrades marginally.
 
 Data Types
 ----------
