@@ -20,9 +20,17 @@ Trinity rotation
 ----------------
 Blitsort uses a [trinity rotation](https://github.com/scandum/rotate), which is significantly faster than rotations in general use.
 
+Memory
+------
+By default blitsort uses 512 elements worth of stack memory. The minimimum stack size on modern systems should be around 8192 KB.
+
+The minimum memory requirement for blitsort is 32 elements of stack memory.
+
 Performance
 -----------
 Due to the monobound binary search and trinity rotation blitsort has exceptional performance.
+
+Blitsort's performance is similar to that of merge sort as long as the auxiliary memory is greater or equal to the square root of the array being sorted, which comes out at 262,144 elements with the default stack of 512 elements.
 
 Data Types
 ----------
@@ -31,14 +39,6 @@ Blitsort supports long doubles and 8, 16, 32, and 64 bit data types. By using 32
 Interface
 ---------
 The interface is the same one as qsort, which is described in [man qsort](https://man7.org/linux/man-pages/man3/qsort.3p.html).
-
-Memory
-------
-By default blitsort uses 512 elements worth of stack memory. The minimimum stack size on modern systems should be around 8192 KB.
-
-The minimum memory requirement for blitsort is 32 elements of stack memory.
-
-Performance is optimal while the auxiliary memory equals the square root of the array being sorted, which comes out at 262,144 elements with the default stack of 512 elements.
 
 Big O
 -----
