@@ -30,6 +30,8 @@
 #ifndef BLITSORT_H
 #define BLITSORT_H
 
+// set to 0 for sqrt N cache size
+
 #define BLITCACHE 512
 
 #include <stdlib.h>
