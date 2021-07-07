@@ -45,6 +45,10 @@ By default blitsort uses 512 elements worth of stack memory.
 
 The minimum memory requirement for blitsort is 32 elements of stack memory, it can be configured to use sqrt(n) memory.
 
+Blitsort rotate merges recursively, requiring an additional log(n) memory.
+
+There is currently no clear consensus on what constitutes as an in-place sort, it boils down to what someone considers a small enough memory footprint to be considered negligable. This typically ranges from the size of a cache line to the size of the L1 cache.
+
 Performance
 -----------
 Blitsort has exceptional performance due to the quad swap, monobound binary search, and trinity rotation.
