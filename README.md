@@ -29,7 +29,7 @@ A block of 4 elements is created with a decision tree, a block of 4 is turned in
 
 Rotate merge sort
 -----------------
-A rotate merge sort uses rotations to partition two sorted arrays until they're small enough to be merged using auxiliary memory. Blitsort does so by taking the center element of the first array, using a binary search to find all elements smaller than the center element in the second array, and performing an array rotation. It does so recursively until a partition can be merged.
+A rotate merge sort uses rotations to partition two sorted arrays until they're small enough to be merged using auxiliary memory. Blitsort does so by taking the center element of the first array, using a binary search to find all elements smaller than the center element in the second array, and performing an array rotation. It does so recursively until a partition becomes small enough to be merged.
 
 Monobound binary search
 -----------------------
@@ -37,7 +37,7 @@ Blitsort uses a [monobound binary search](https://github.com/scandum/binary_sear
 
 Trinity rotation
 ----------------
-Blitsort uses a [trinity rotation](https://github.com/scandum/rotate), which is significantly faster than rotations in general use.
+Blitsort uses a [trinity rotation](https://github.com/scandum/rotate), a new and significantly faster array rotation algorithm.
 
 Memory
 ------
