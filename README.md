@@ -17,7 +17,7 @@ In the visualization below nine tests are performed on 256 elements.
 9. Ascending tiles.
 
 The upper half shows the swap memory of 32 elements, and the bottom half shows the main memory.
-Colors are used to differentiate various operations. Rotations are in yellow and violet.
+Colors are used to differentiate various operations. Parity merges are in orange. Rotations are in yellow and violet.
 
 [![blitsort benchmark](/images/blitsort.gif)](https://www.youtube.com/watch?v=3ibxXQ1KCbI)
 
@@ -45,19 +45,19 @@ By default blitsort uses 512 elements worth of stack memory.
 
 The minimum memory requirement for blitsort is 32 elements of stack memory, it can be configured to use sqrt(n) memory.
 
-Blitsort rotate merges recursively, requiring an additional log(n) memory.
+Blitsort rotate merges recursively, requiring an additional log(n) memory. It's possible to make this O(1) through the implementation of a stack.
 
 There is currently no clear consensus on what constitutes as an in-place sort, it boils down to what someone considers a small enough memory footprint to be considered negligable. This typically ranges from the size of a cache line to the size of the L1 cache.
 
 Performance
 -----------
-Blitsort has exceptional performance due to the quad swap, monobound binary search, and trinity rotation.
+Blitsort has exceptional performance due to the quad swap, monobound binary search, and trinity rotation. It is likely the fastest in-place stable sort written so far and is about 15% faster than [octosort](https://github.com/scandum/octosort), which is a block merge sort.
 
-Blitsort's performance is similar to that of quadsort as long as the auxiliary memory is greater or equal to the square root of the array being sorted, which comes out at 262,144 elements with the default stack of 512 elements. Performance on larger arrays degrades marginally.
+Blitsort's performance is similar to that of quadsort as long as the auxiliary memory is greater or equal to the square root of the array being sorted, which comes out at 262,144 elements with the default stack of 512 elements. Performance on larger arrays will degrade slowly.
 
 Data Types
 ----------
-Blitsort supports long doubles and 8, 16, 32, and 64 bit data types. By using 32 or 64 bit pointers it's possible to sort any other data type.
+Blitsort supports long doubles and 8, 16, 32, and 64 bit data types. By using 32 or 64 bit pointers it's possible to sort any other data type, like strings. Custom data sizes can be added in blitsort.h.
 
 Interface
 ---------
