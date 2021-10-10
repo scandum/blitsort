@@ -17,7 +17,7 @@ In the visualization below nine tests are performed on 256 elements.
 9. Ascending tiles.
 
 The upper half shows the swap memory of 32 elements, and the bottom half shows the main memory.
-Colors are used to differentiate various operations. Rotations are in yellow and violet.
+Colors are used to differentiate various operations. Parity merges are in orange. Rotations are in yellow and violet.
 
 [![blitsort benchmark](/images/blitsort.gif)](https://www.youtube.com/watch?v=3ibxXQ1KCbI)
 
@@ -29,7 +29,7 @@ A block of 4 elements is created with a decision tree, a block of 4 is turned in
 
 Rotate merge sort
 -----------------
-A rotate merge sort uses rotations to partition two sorted arrays until they're small enough to be merged using auxiliary memory. Blitsort does so by taking the center element of the first array, using a binary search to find all elements smaller than the center element in the second array, and performing an array rotation. It does so recursively until a partition can be merged.
+A rotate merge sort uses rotations to partition two sorted arrays until they're small enough to be merged using auxiliary memory. Blitsort does so by taking the center element of the first array, using a binary search to find all elements smaller than the center element in the second array, and performing an array rotation. It does so recursively until a partition becomes small enough to be merged.
 
 Monobound binary search
 -----------------------
@@ -37,23 +37,27 @@ Blitsort uses a [monobound binary search](https://github.com/scandum/binary_sear
 
 Trinity rotation
 ----------------
-Blitsort uses a [trinity rotation](https://github.com/scandum/rotate), which is significantly faster than rotations in general use.
+Blitsort uses a [trinity rotation](https://github.com/scandum/rotate), a new and significantly faster array rotation algorithm.
 
 Memory
 ------
-By default blitsort uses 512 elements worth of stack memory. The minimimum stack size on modern systems should be around 8192 KB.
+By default blitsort uses 512 elements worth of stack memory.
 
-The minimum memory requirement for blitsort is 32 elements of stack memory.
+The minimum memory requirement for blitsort is 32 elements of stack memory, it can be configured to use sqrt(n) memory.
+
+Blitsort rotate merges recursively, requiring an additional log(n) memory. It's possible to make this O(1) through the implementation of a stack.
+
+There is currently no clear consensus on what constitutes as an in-place sort, it boils down to what someone considers a small enough memory footprint to be considered negligable. This typically ranges from the size of a cache line to the size of the L1 cache.
 
 Performance
 -----------
-Blitsort has exceptional performance due to the quad swap, monobound binary search, and trinity rotation.
+Blitsort has exceptional performance due to the quad swap, monobound binary search, and trinity rotation. It is likely the fastest in-place stable sort written so far and is about 15% faster than [octosort](https://github.com/scandum/octosort), which is a block merge sort.
 
-Blitsort's performance is similar to that of quadsort as long as the auxiliary memory is greater or equal to the square root of the array being sorted, which comes out at 262,144 elements with the default stack of 512 elements.
+Blitsort's performance is similar to that of quadsort as long as the auxiliary memory is greater or equal to the square root of the array being sorted, which comes out at 262,144 elements with the default stack of 512 elements. Performance on larger arrays will degrade slowly.
 
 Data Types
 ----------
-Blitsort supports long doubles and 8, 16, 32, and 64 bit data types. By using 32 or 64 bit pointers it's possible to sort any other data type.
+Blitsort supports long doubles and 8, 16, 32, and 64 bit data types. By using 32 or 64 bit pointers it's possible to sort any other data type, like strings. Custom data sizes can be added in blitsort.h.
 
 Interface
 ---------
@@ -67,20 +71,23 @@ Big O
 ┌───────────────┐├───────┬───────┬───────┤├───────┬───────┬───────┤┌──────┐┌─────────┐┌─────────┐
 │name           ││min    │avg    │max    ││min    │avg    │max    ││stable││partition││adaptive │
 ├───────────────┤├───────┼───────┼───────┤├───────┼───────┼───────┤├──────┤├─────────┤├─────────┤
+│blitsort       ││n      │n log n│n log n││1      │1      │1      ││yes   ││no       ││yes      │
+├───────────────┤├───────┼───────┼───────┤├───────┼───────┼───────┤├──────┤├─────────┤├─────────┤
 │mergesort      ││n log n│n log n│n log n││n      │n      │n      ││yes   ││no       ││no       │
 ├───────────────┤├───────┼───────┼───────┤├───────┼───────┼───────┤├──────┤├─────────┤├─────────┤
-│blitsort       ││n      │n log n│n log n││1      │1      │1      ││yes   ││no       ││yes      │
+│timsort        ││n      │n log n│n log n││n      │n      │n      ││yes   ││no       ││yes      │
 ├───────────────┤├───────┼───────┼───────┤├───────┼───────┼───────┤├──────┤├─────────┤├─────────┤
 │quicksort      ││n      │n log n│n²     ││1      │1      │1      ││no    ││yes      ││no       │
 └───────────────┘└───────┴───────┴───────┘└───────┴───────┴───────┘└──────┘└─────────┘└─────────┘
 ```
 
-Benchmark: blitsort vs std::stable_sort vs timsort
---------------------------------------------------
+Benchmark: blitsort vs std::stable_sort vs gfx::timsort
+-------------------------------------------------------
 The following benchmark was on WSL 2 gcc version 7.5.0 (Ubuntu 7.5.0-3ubuntu1~18.04)
-using the [wolfsort benchmark](https://github.com/scandum/wolfsort).
-The source code was compiled using `g++ -O3 -w -fpermissive bench.c`. Each test was ran 100 times
-and only the best run is reported. Stablesort is g++'s std:stablesort function.
+using the [wolfsort benchmark](https://github.com/scandum/wolfsort). The source code
+was compiled using `g++ -O3 -w -fpermissive bench.c`. Stablesort is g++'s std:stable_sort function.
+
+The graph shows the relative performance on 100,000 32 bit integers.
 
 ![Graph](/images/graph1.png)
 
@@ -129,9 +136,9 @@ and only the best run is reported. Stablesort is g++'s std:stablesort function.
 Benchmark: blitsort vs qsort (quicksort)
 ----------------------------------------
 The following benchmark was on CYGWIN_NT-10.0-WOW gcc version 10.2.0.
-The source code was compiled using gcc -O3 bench.c. Each test was ran 10 times
-and only the best run is reported. It's generated by running the benchmark using
-100000 10 as the argument.
+The source code was compiled using gcc -O3 bench.c.
+
+The graph shows the relative performance on 100,000 32 bit integers.
 
 ![Graph](/images/graph4.png)
 
@@ -167,5 +174,3 @@ and only the best run is reported. It's generated by running the benchmark using
 |  blitsort |   100000 |   32 | 0.002868 | 0.002872 |    809499 |      10 |  ascending tiles |
 
 </details>
-
-If blitsort was to ignore stability it would beat quicksort on the generic order and ascending tiles distributions as well.
