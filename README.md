@@ -57,7 +57,7 @@ Performance
 -----------
 Blitsort has exceptional performance due to the quad swap, monobound binary search, and trinity rotation. It is likely the fastest in-place stable sort written so far and is about 15% faster than [octosort](https://github.com/scandum/octosort), which is a block merge sort.
 
-Blitsort's performance is similar to that of quadsort as long as the auxiliary memory is greater or equal to the square root of the array being sorted, which comes out at 262,144 elements with the default stack of 512 elements. Performance on larger arrays will degrade slowly.
+Blitsort's performance is similar to that of quadsort as long as the auxiliary memory is 1/4th the size of the array being sorted, which comes out at 2047 elements with the default stack of 512 elements. Performance on larger arrays degrades steadily but will still beat a traditional mergesort at 10 million elements.
 
 Data Types
 ----------
