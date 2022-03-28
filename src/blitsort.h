@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2014-2021 Igor van den Hoven ivdhoven@gmail.com
+	Copyright (C) 2014-2022 Igor van den Hoven ivdhoven@gmail.com
 */
 
 /*
@@ -24,50 +24,23 @@
 */
 
 /*
-	blitsort 1.1.5.1
+	blitsort 1.1.5.2
 */
 
 #ifndef BLITSORT_H
 #define BLITSORT_H
 
+#include "quadsort.h"
+
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 #include <errno.h>
-
-// set to 0 for sqrt N cache size
-
-#define BLITCACHE 512
 
 typedef int CMPFUNC (const void *a, const void *b);
 
 //#define cmp(a,b) (*(a) > *(b))
-
-#define parity_merge_two(array, swap, x, y, ptl, ptr, pts, cmp)  \
-{  \
-	ptl = array + 0; ptr = array + 2; pts = swap + 0;  \
-	x = cmp(ptl, ptr) <= 0; y = !x; pts[x] = *ptr; ptr += y; pts[y] = *ptl; ptl += x; pts++;  \
-	*pts = cmp(ptl, ptr) <= 0 ? *ptl : *ptr;  \
-  \
-	ptl = array + 1; ptr = array + 3; pts = swap + 3;  \
-	x = cmp(ptl, ptr) <= 0; y = !x; pts--; pts[x] = *ptr; ptr -= x; pts[y] = *ptl; ptl -= y;  \
-	*pts = cmp(ptl, ptr)  > 0 ? *ptl : *ptr;  \
-}
-
-#define parity_merge_four(array, swap, x, y, ptl, ptr, pts, cmp)  \
-{  \
-	ptl = array + 0; ptr = array + 4; pts = swap;  \
-	x = cmp(ptl, ptr) <= 0; y = !x; pts[x] = *ptr; ptr += y; pts[y] = *ptl; ptl += x; pts++;  \
-	x = cmp(ptl, ptr) <= 0; y = !x; pts[x] = *ptr; ptr += y; pts[y] = *ptl; ptl += x; pts++;  \
-	x = cmp(ptl, ptr) <= 0; y = !x; pts[x] = *ptr; ptr += y; pts[y] = *ptl; ptl += x; pts++;  \
-	*pts = cmp(ptl, ptr) <= 0 ? *ptl : *ptr;  \
-  \
-	ptl = array + 3; ptr = array + 7; pts = swap + 7;  \
-	x = cmp(ptl, ptr) <= 0; y = !x; pts--; pts[x] = *ptr; ptr -= x; pts[y] = *ptl; ptl -= y;  \
-	x = cmp(ptl, ptr) <= 0; y = !x; pts--; pts[x] = *ptr; ptr -= x; pts[y] = *ptl; ptl -= y;  \
-	x = cmp(ptl, ptr) <= 0; y = !x; pts--; pts[x] = *ptr; ptr -= x; pts[y] = *ptl; ptl -= y;  \
-	*pts = cmp(ptl, ptr)  > 0 ? *ptl : *ptr;  \
-}
 
 //////////////////////////////////////////////////////////
 //┌────────────────────────────────────────────────────┐//
@@ -126,6 +99,8 @@ typedef int CMPFUNC (const void *a, const void *b);
 #undef FUNC
 #undef STRUCT
 
+//typedef struct {char bytes[4];} struct32;
+//#define VAR struct32
 #define VAR int
 #define FUNC(NAME) NAME##32
 #define STRUCT(NAME) struct NAME##32
@@ -174,6 +149,10 @@ typedef int CMPFUNC (const void *a, const void *b);
 
 #include "blitsort.c"
 
+#undef VAR
+#undef FUNC
+#undef STRUCT
+
 //////////////////////////////////////////////////////////////////////////////
 //┌────────────────────────────────────────────────────────────────────────┐//
 //│   ██████┐ ██┐     ██████┐████████┐███████┐ ██████┐ ██████┐ ████████┐   │//
@@ -213,11 +192,5 @@ void blitsort(void *array, size_t nmemb, size_t size, CMPFUNC *cmp)
 			return assert(size == sizeof(char) || size == sizeof(short) || size == sizeof(int) || size == sizeof(long long) || size == sizeof(long double));
 	}
 }
-
-#undef VAR
-#undef FUNC
-#undef STRUCT
-
-#undef BLITCACHE
 
 #endif
