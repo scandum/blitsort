@@ -36,7 +36,7 @@ By default blitsort uses 512 elements worth of stack memory.
 
 The minimum memory requirement for blitsort is 32 elements of stack memory, it can be configured to use sqrt(n) memory.
 
-Blitsort rotate merges recursively, requiring an additional log(n) memory. It's possible to make this O(1) through the implementation of a stack.
+Blitsort partitions recursively, requiring an additional log(n) memory. It's possible to make this O(1) through the implementation of a stack.
 
 There is currently no clear consensus on what constitutes as an in-place sort, it boils down to what someone considers a small enough memory footprint to be considered negligable. This typically ranges from the size of a cache line to the size of the L1 cache.
 
@@ -44,7 +44,7 @@ Performance
 -----------
 Blitsort has exceptional performance due to the use of trinity / bridge rotations. It is likely the fastest in-place stable sort written so far and is about 15-50% faster than [octosort](https://github.com/scandum/octosort), which is a block merge sort.
 
-Blitsort's performance is similar to that of quadsort as long as it has sqrt(n) auxiliary memory. Performance on larger arrays degrades steadily but will still beat a traditional mergesort at 10 million elements.
+Blitsort's performance is similar to that of fluxsort as long as it has sqrt(n) auxiliary memory. Performance on larger arrays degrades steadily but will still beat most traditional sorts at 10 million elements.
 
 Data Types
 ----------
