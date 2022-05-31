@@ -24,64 +24,100 @@
 */
 
 /*
-	blitsort 1.1.5.2
+	blitsort 1.1.5.3
 */
 
-#define BLIT_AUX 512 // set to 0 for sqrt N cache size
+#define BLIT_AUX 512 // set to 0 for sqrt(n) cache size
 #define BLIT_OUT  24
 
-size_t FUNC(blit_analyze)(VAR *array, VAR *swap, size_t swap_size, size_t nmemb, CMPFUNC *cmp)
+void FUNC(blit_partition)(VAR *array, VAR *swap, size_t swap_size, size_t nmemb, CMPFUNC *cmp);
+
+void FUNC(blit_analyze)(VAR *array, VAR *swap, size_t swap_size, size_t nmemb, CMPFUNC *cmp)
 {
-	char loop, dist;
-	size_t cnt, balance = 0, streaks = 0;
-	VAR *pta, *ptb, tmp;
+	char loop, asum, zsum;
+	size_t cnt, abalance = 0, zbalance = 0, astreaks = 0, zstreaks = 0;
+	VAR *pta, *ptz, tmp;
 
 	pta = array;
+	ptz = array + nmemb - 2;
 
-	for (cnt = nmemb ; cnt > 16 ; cnt -= 16)
+	for (cnt = nmemb ; cnt > 64 ; cnt -= 64)
 	{
-		for (dist = 0, loop = 16 ; loop ; loop--)
+		for (asum = zsum = 0, loop = 32 ; loop ; loop--)
 		{
-			dist += cmp(pta, pta + 1) > 0; pta++;
+			asum += cmp(pta, pta + 1) > 0; pta++;
+			zsum += cmp(ptz, ptz + 1) > 0; ptz--;
 		}
-		streaks += (dist == 0) | (dist == 16);
-		balance += dist;
+		astreaks += (asum == 0) | (asum == 32);
+		zstreaks += (zsum == 0) | (zsum == 32);
+		abalance += asum;
+		zbalance += zsum;
 	}
 
 	while (--cnt)
 	{
-		balance += cmp(pta, pta + 1) > 0;
-		pta++;
+		zbalance += cmp(ptz, ptz + 1) > 0; ptz--;
 	}
 
-	if (balance == 0)
+	if (abalance + zbalance == 0)
 	{
-		return 1;
+		return;
 	}
 
-	if (balance == nmemb - 1)
+	if (abalance + zbalance == nmemb - 1)
 	{
+		ptz = array + nmemb;
 		pta = array;
-		ptb = array + nmemb;
 
 		cnt = nmemb / 2;
 
 		do
 		{
-			tmp = *pta; *pta++ = *--ptb; *ptb = tmp;
+			tmp = *pta; *pta++ = *--ptz; *ptz = tmp;
 		}
 		while (--cnt);
 
-		return 1;
+		return;
 	}
 
-	if (streaks >= nmemb / 36)
+	if (astreaks + zstreaks > nmemb / 40)
 	{
 		FUNC(quadsort_swap)(array, swap, swap_size, nmemb, cmp);
-
-		return 1;
+		return;
 	}
-	return 0;
+
+	if (astreaks + zstreaks > nmemb / 80)
+	{
+		if (nmemb >= 512)
+		{
+			size_t block = pta - array;
+
+			if (astreaks < nmemb / 128)
+			{
+				FUNC(blit_partition)(array, swap, swap_size, block, cmp);
+			}
+			else if (abalance)
+			{
+				FUNC(quadsort_swap)(array, swap, swap_size, block, cmp);
+			}
+
+			if (zstreaks < nmemb / 128)
+			{
+				FUNC(blit_partition)(array + block, swap, swap_size, nmemb - block, cmp);
+			}
+			else if (zbalance)
+			{
+				FUNC(quadsort_swap)(array + block, swap, swap_size, nmemb - block, cmp);
+			}
+			FUNC(blit_merge_block)(array, swap, swap_size, block, nmemb - block, cmp);
+		}
+		else
+		{
+			FUNC(quadsort_swap)(array, swap, swap_size, nmemb, cmp);
+		}
+		return;
+	}
+	FUNC(blit_partition)(array, swap, swap_size, nmemb, cmp);
 }
 
 VAR FUNC(blit_median_of_sqrt)(VAR *array, VAR *swap, size_t swap_size, size_t nmemb, CMPFUNC *cmp)
@@ -326,10 +362,7 @@ void FUNC(blitsort)(VAR *array, size_t nmemb, CMPFUNC *cmp)
 #endif
 		VAR swap[swap_size];
 
-		if (FUNC(blit_analyze)(array, swap, swap_size, nmemb, cmp) == 0)
-		{
-			FUNC(blit_partition)(array, swap, swap_size, nmemb, cmp);
-		}
+		FUNC(blit_analyze)(array, swap, swap_size, nmemb, cmp);
 	}
 }
 
@@ -339,9 +372,9 @@ void FUNC(blitsort_swap)(VAR *array, VAR *swap, size_t swap_size, size_t nmemb, 
 	{
 		FUNC(tail_swap)(array, nmemb, cmp);
 	}
-	else if (FUNC(blit_analyze)(array, swap, swap_size, nmemb, cmp) == 0)
+	else
 	{
-		FUNC(blit_partition)(array, swap, swap_size, nmemb, cmp);
+		FUNC(blit_analyze)(array, swap, swap_size, nmemb, cmp);
 	}
 }
 
