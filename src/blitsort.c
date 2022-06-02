@@ -80,15 +80,9 @@ void FUNC(blit_analyze)(VAR *array, VAR *swap, size_t swap_size, size_t nmemb, C
 		return;
 	}
 
-	if (astreaks + zstreaks > nmemb / 40)
-	{
-		FUNC(quadsort_swap)(array, swap, swap_size, nmemb, cmp);
-		return;
-	}
-
 	if (astreaks + zstreaks > nmemb / 80)
 	{
-		if (nmemb >= 512)
+		if (nmemb >= 1024)
 		{
 			size_t block = pta - array;
 
