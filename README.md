@@ -245,3 +245,54 @@ below the bar graph.
 |  blitsort |   100000 |   32 | 0.003875 | 0.004115 |   1895179 |     100 |     bit reversal |
 
 </details>
+
+Benchmark: blitsort vs pdqsort
+------------------------------
+The following benchmark was on WSL gcc version 7.5.0 (Ubuntu 7.5.0-3ubuntu1~18.04) using the [wolfsort](https://github.com/scandum/wolfsort) benchmark.
+The source code was compiled using g++ -O3 -w -fpermissive bench.c. The bar graph shows the best run out of 100 on 100,000 32 bit integers. Comparisons for blitsort and pdqsort are inlined.
+
+![Graph](/images/graph5.png)
+
+<details><summary><b>data table</b></summary>
+
+|      Name |    Items | Type |     Best |  Average |  Compares | Samples |     Distribution |
+| --------- | -------- | ---- | -------- | -------- | --------- | ------- | ---------------- |
+|   pdqsort |   100000 |   64 | 0.002658 | 0.002692 |         1 |     100 |     random order |
+|  blitsort |   100000 |   64 | 0.002415 | 0.002508 |         1 |     100 |     random order |
+
+|      Name |    Items | Type |     Best |  Average |     Loops | Samples |     Distribution |
+| --------- | -------- | ---- | -------- | -------- | --------- | ------- | ---------------- |
+|   pdqsort |   100000 |   32 | 0.002683 | 0.002708 |         1 |     100 |     random order |
+|  blitsort |   100000 |   32 | 0.002239 | 0.002334 |         1 |     100 |     random order |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.000786 | 0.000793 |         1 |     100 |     random % 100 |
+|  blitsort |   100000 |   32 | 0.001041 | 0.001105 |         1 |     100 |     random % 100 |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.000091 | 0.000092 |         1 |     100 |  ascending order |
+|  blitsort |   100000 |   32 | 0.000043 | 0.000044 |         1 |     100 |  ascending order |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.003460 | 0.003483 |         1 |     100 |    ascending saw |
+|  blitsort |   100000 |   32 | 0.000749 | 0.000757 |         1 |     100 |    ascending saw |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.002834 | 0.002862 |         1 |     100 |       pipe organ |
+|  blitsort |   100000 |   32 | 0.000387 | 0.000390 |         1 |     100 |       pipe organ |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.000194 | 0.000197 |         1 |     100 | descending order |
+|  blitsort |   100000 |   32 | 0.000055 | 0.000057 |         1 |     100 | descending order |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.003233 | 0.003253 |         1 |     100 |   descending saw |
+|  blitsort |   100000 |   32 | 0.000756 | 0.000768 |         1 |     100 |   descending saw |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.002239 | 0.002255 |         1 |     100 |      random tail |
+|  blitsort |   100000 |   32 | 0.000409 | 0.000415 |         1 |     100 |      random tail |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.002665 | 0.002685 |         1 |     100 |      random half |
+|  blitsort |   100000 |   32 | 0.001369 | 0.001376 |         1 |     100 |      random half |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.002308 | 0.002331 |         1 |     100 |  ascending tiles |
+|  blitsort |   100000 |   32 | 0.001374 | 0.001389 |         1 |     100 |  ascending tiles |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.002664 | 0.002685 |         1 |     100 |     bit reversal |
+|  blitsort |   100000 |   32 | 0.002015 | 0.002120 |         1 |     100 |     bit reversal |
+
+</details>
