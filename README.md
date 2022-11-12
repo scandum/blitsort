@@ -18,6 +18,10 @@ Rotate merge sort
 -----------------
 A rotate merge sort uses rotations to partition two sorted arrays until they're small enough to be merged using auxiliary memory. Blitsort does so by taking the center element of the first array, using a binary search to find all elements smaller than the center element in the second array, and performing an array rotation. It does so recursively until a partition becomes small enough to be merged.
 
+Rotate stable quicksort
+-----------------------
+A stable rotate quicksort partitions the array in segments using auxiliary memory, the left and right partition of each segment is then moved to the proper location recursively using rotations. On random data it's faster than a rotate mergesort since no binary search is required and because the branchless optimizations are slightly more efficient. 
+
 Monobound binary search
 -----------------------
 Blitsort uses a [monobound binary search](https://github.com/scandum/binary_search), which is up to two times faster than the binary search in general use.
@@ -25,10 +29,6 @@ Blitsort uses a [monobound binary search](https://github.com/scandum/binary_sear
 Trinity rotation
 ----------------
 Blitsort uses a [trinity rotation](https://github.com/scandum/rotate), a new and significantly faster array rotation algorithm.
-
-Rotate quicksort
-----------------
-A rotate quicksort is simpler and faster than a rotate mergesort since no binary search is required and branchless optimizations are more efficient.
 
 Memory
 ------
