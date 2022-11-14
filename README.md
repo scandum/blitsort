@@ -46,6 +46,8 @@ Blitsort has exceptional performance due to the use of trinity / bridge rotation
 
 Blitsort's performance is similar to that of fluxsort as long as it has sqrt(n) auxiliary memory. Performance on larger arrays degrades steadily but will still beat most traditional sorts at 10 million elements.
 
+To take full advantage of branchless operations the `cmp` macro needs to be uncommented in bench.c, which will double the performance on primitive types.
+
 Data Types
 ----------
 Blitsort supports long doubles and 8, 16, 32, and 64 bit data types. By using 32 or 64 bit pointers it's possible to sort any other data type, like strings. Custom data sizes can be added in blitsort.h. For any practical use where stability matters you'll likely be using pointers however.
