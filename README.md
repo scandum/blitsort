@@ -18,6 +18,10 @@ Rotate merge sort
 -----------------
 A rotate merge sort uses rotations to partition two sorted arrays until they're small enough to be merged using auxiliary memory. Blitsort does so by taking the center element of the first array, using a binary search to find all elements smaller than the center element in the second array, and performing an array rotation. It does so recursively until a partition becomes small enough to be merged.
 
+Rotate stable quicksort
+-----------------------
+A stable rotate quicksort partitions the array in segments using auxiliary memory, the left and right partition of each segment is then moved to the proper location recursively using rotations. On random data it's faster than a rotate mergesort since no binary search is required and because the branchless optimizations are slightly more efficient. 
+
 Monobound binary search
 -----------------------
 Blitsort uses a [monobound binary search](https://github.com/scandum/binary_search), which is up to two times faster than the binary search in general use.
@@ -25,10 +29,6 @@ Blitsort uses a [monobound binary search](https://github.com/scandum/binary_sear
 Trinity rotation
 ----------------
 Blitsort uses a [trinity rotation](https://github.com/scandum/rotate), a new and significantly faster array rotation algorithm.
-
-Rotate quicksort
-----------------
-A rotate quicksort is simpler and faster than a rotate mergesort since no binary search is required and branchless optimizations are more efficient.
 
 Memory
 ------
@@ -46,6 +46,8 @@ Blitsort has exceptional performance due to the use of trinity / bridge rotation
 
 Blitsort's performance is similar to that of fluxsort as long as it has sqrt(n) auxiliary memory. Performance on larger arrays degrades steadily but will still beat most traditional sorts at 10 million elements.
 
+To take full advantage of branchless operations the `cmp` macro needs to be uncommented in bench.c, which will double the performance on primitive types.
+
 Data Types
 ----------
 Blitsort supports long doubles and 8, 16, 32, and 64 bit data types. By using 32 or 64 bit pointers it's possible to sort any other data type, like strings. Custom data sizes can be added in blitsort.h. For any practical use where stability matters you'll likely be using pointers however.
@@ -56,13 +58,13 @@ The interface is the same one as qsort, which is described in [man qsort](https:
 
 Big O
 -----
-```cobol
+```
                  ┌───────────────────────┐┌───────────────────────┐
                  │comparisons            ││swap memory            │
 ┌───────────────┐├───────┬───────┬───────┤├───────┬───────┬───────┤┌──────┐┌─────────┐┌─────────┐
 │name           ││min    │avg    │max    ││min    │avg    │max    ││stable││partition││adaptive │
 ├───────────────┤├───────┼───────┼───────┤├───────┼───────┼───────┤├──────┤├─────────┤├─────────┤
-│blitsort       ││n      │n log n│n log n││1      │1      │1      ││yes   ││no       ││yes      │
+│blitsort       ││n      │n log n│n log n││1      │1      │1      ││yes   ││yes      ││yes      │
 ├───────────────┤├───────┼───────┼───────┤├───────┼───────┼───────┤├──────┤├─────────┤├─────────┤
 │mergesort      ││n log n│n log n│n log n││n      │n      │n      ││yes   ││no       ││no       │
 ├───────────────┤├───────┼───────┼───────┤├───────┼───────┼───────┤├──────┤├─────────┤├─────────┤
@@ -243,5 +245,56 @@ below the bar graph.
 |           |          |      |          |          |           |         |                  |
 |     qsort |   100000 |   32 | 0.005230 | 0.006049 |   1553378 |     100 |     bit reversal |
 |  blitsort |   100000 |   32 | 0.003875 | 0.004115 |   1895179 |     100 |     bit reversal |
+
+</details>
+
+Benchmark: blitsort vs pdqsort
+------------------------------
+The following benchmark was on WSL gcc version 7.5.0 (Ubuntu 7.5.0-3ubuntu1~18.04) using the [wolfsort](https://github.com/scandum/wolfsort) benchmark.
+The source code was compiled using g++ -O3 -w -fpermissive bench.c. The bar graph shows the best run out of 100 on 100,000 32 bit integers. Comparisons for blitsort and pdqsort are inlined.
+
+![Graph](/images/graph5.png)
+
+<details><summary><b>data table</b></summary>
+
+|      Name |    Items | Type |     Best |  Average |  Compares | Samples |     Distribution |
+| --------- | -------- | ---- | -------- | -------- | --------- | ------- | ---------------- |
+|   pdqsort |   100000 |   64 | 0.002658 | 0.002692 |         1 |     100 |     random order |
+|  blitsort |   100000 |   64 | 0.002415 | 0.002508 |         1 |     100 |     random order |
+
+|      Name |    Items | Type |     Best |  Average |     Loops | Samples |     Distribution |
+| --------- | -------- | ---- | -------- | -------- | --------- | ------- | ---------------- |
+|   pdqsort |   100000 |   32 | 0.002683 | 0.002708 |         1 |     100 |     random order |
+|  blitsort |   100000 |   32 | 0.002239 | 0.002334 |         1 |     100 |     random order |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.000786 | 0.000793 |         1 |     100 |     random % 100 |
+|  blitsort |   100000 |   32 | 0.001041 | 0.001105 |         1 |     100 |     random % 100 |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.000091 | 0.000092 |         1 |     100 |  ascending order |
+|  blitsort |   100000 |   32 | 0.000043 | 0.000044 |         1 |     100 |  ascending order |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.003460 | 0.003483 |         1 |     100 |    ascending saw |
+|  blitsort |   100000 |   32 | 0.000749 | 0.000757 |         1 |     100 |    ascending saw |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.002834 | 0.002862 |         1 |     100 |       pipe organ |
+|  blitsort |   100000 |   32 | 0.000387 | 0.000390 |         1 |     100 |       pipe organ |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.000194 | 0.000197 |         1 |     100 | descending order |
+|  blitsort |   100000 |   32 | 0.000055 | 0.000057 |         1 |     100 | descending order |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.003233 | 0.003253 |         1 |     100 |   descending saw |
+|  blitsort |   100000 |   32 | 0.000756 | 0.000768 |         1 |     100 |   descending saw |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.002239 | 0.002255 |         1 |     100 |      random tail |
+|  blitsort |   100000 |   32 | 0.000409 | 0.000415 |         1 |     100 |      random tail |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.002665 | 0.002685 |         1 |     100 |      random half |
+|  blitsort |   100000 |   32 | 0.001369 | 0.001376 |         1 |     100 |      random half |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.002308 | 0.002331 |         1 |     100 |  ascending tiles |
+|  blitsort |   100000 |   32 | 0.001374 | 0.001389 |         1 |     100 |  ascending tiles |
+|           |          |      |          |          |           |         |                  |
+|   pdqsort |   100000 |   32 | 0.002664 | 0.002685 |         1 |     100 |     bit reversal |
+|  blitsort |   100000 |   32 | 0.002015 | 0.002120 |         1 |     100 |     bit reversal |
 
 </details>
