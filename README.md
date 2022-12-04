@@ -1,6 +1,6 @@
 Origin
 ------
-Blitsort is an in-place rotate quick/merge sort based on the stable out-of-place merge sort [quadsort](https://github.com/scandum/quadsort), stable out-of-place quicksort [fluxsort](https://github.com/scandum/fluxsort), and unstable in-place [crumsort](https://github.com/scandum/crumsort). This page primarily focuses on the in-place stable aspects of blitsort, the quadsort and fluxsort pages go into greater detail about mergesort and quicksort respectively.
+Blitsort is an in-place rotate quick/merge sort based on the stable out-of-place merge sort [quadsort](https://github.com/scandum/quadsort), stable out-of-place quicksort [fluxsort](https://github.com/scandum/fluxsort), and unstable in-place [crumsort](https://github.com/scandum/crumsort). This page primarily focuses on the in-place stable aspects of blitsort, the quadsort and fluxsort pages go into greater detail about mergesort and stable quicksort respectively.
 
 Visualization
 -------------
