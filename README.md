@@ -1,6 +1,6 @@
 Origin
 ------
-Blitsort is an in-place rotate quick/merge sort based on [quadsort](https://github.com/scandum/quadsort) and [fluxsort](https://github.com/scandum/fluxsort).
+Blitsort is an in-place rotate quick/merge sort based on the stable out-of-place merge sort [quadsort](https://github.com/scandum/quadsort), stable out-of-place quicksort [fluxsort](https://github.com/scandum/fluxsort), and unstable in-place [crumsort](https://github.com/scandum/crumsort). This page primarily focuses on the in-place stable aspects of blitsort.
 
 Visualization
 -------------
@@ -8,7 +8,7 @@ In the visualization below the upper half shows the swap memory (32 elements) an
 
 [![blitsort benchmark](/images/blitsort.gif)](https://www.youtube.com/watch?v=WaqkBO_nV7k)
 
-The visualization only shows the sorting of random data, the sorting of ordered data is identical to the visualization on the quadsort github page.
+The [blitsort visualization](https://www.youtube.com/watch?v=WaqkBO_nV7k) only shows the sorting of random data, the sorting of ordered data is identical to the [quadsort visualization](https://www.youtube.com/watch?v=GJjH_99BS70) on the quadsort github page.
 
 Analyzer
 --------
@@ -36,7 +36,7 @@ By default blitsort uses 512 elements worth of stack memory.
 
 The minimum memory requirement for blitsort is 32 elements of stack memory, it can be configured to use sqrt(n) memory.
 
-Blitsort partitions recursively, requiring an additional log(n) memory. It's possible to make this O(1) through the implementation of a stack.
+Blitsort partitions recursively, requiring an additional log(n) memory. It's possible to make this O(1) through the implementation of a stack, which makes the rotate quick/merge sort algorithm in-place from a theoretical perspective.
 
 There is currently no clear consensus on what constitutes as an in-place sort, it boils down to what someone considers a small enough memory footprint to be considered negligable. This typically ranges from the size of a cache line to the size of the L1 cache.
 
@@ -66,9 +66,13 @@ Big O
 ├───────────────┤├───────┼───────┼───────┤├───────┼───────┼───────┤├──────┤├─────────┤├─────────┤
 │blitsort       ││n      │n log n│n log n││1      │1      │1      ││yes   ││yes      ││yes      │
 ├───────────────┤├───────┼───────┼───────┤├───────┼───────┼───────┤├──────┤├─────────┤├─────────┤
+│crumsort       ││n      │n log n│n log n││1      │1      │1      ││no    ││yes      ││yes      │
+├───────────────┤├───────┼───────┼───────┤├───────┼───────┼───────┤├──────┤├─────────┤├─────────┤
+│fluxsort       ││n      │n log n│n log n││1      │n      │n      ││yes   ││yes      ││yes      │
+├───────────────┤├───────┼───────┼───────┤├───────┼───────┼───────┤├──────┤├─────────┤├─────────┤
 │mergesort      ││n log n│n log n│n log n││n      │n      │n      ││yes   ││no       ││no       │
 ├───────────────┤├───────┼───────┼───────┤├───────┼───────┼───────┤├──────┤├─────────┤├─────────┤
-│timsort        ││n      │n log n│n log n││n      │n      │n      ││yes   ││no       ││yes      │
+│quadsort       ││n      │n log n│n log n││1      │n      │n      ││yes   ││no       ││yes      │
 ├───────────────┤├───────┼───────┼───────┤├───────┼───────┼───────┤├──────┤├─────────┤├─────────┤
 │quicksort      ││n      │n log n│n²     ││1      │1      │1      ││no    ││yes      ││no       │
 └───────────────┘└───────┴───────┴───────┘└───────┴───────┴───────┘└──────┘└─────────┘└─────────┘
