@@ -24,7 +24,7 @@
 */
 
 /*
-	blitsort 1.1.5.3
+	blitsort 1.1.5.4
 */
 
 #define BLIT_AUX 512 // set to 0 for sqrt(n) cache size
@@ -481,6 +481,7 @@ void FUNC(blitsort)(VAR *array, size_t nmemb, CMPFUNC *cmp)
 		{
 			swap_size /= 4;
 		}
+		printf("swap_size: %lu\n", swap_size);
 #endif
 		VAR swap[swap_size];
 
