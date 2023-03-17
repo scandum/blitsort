@@ -24,7 +24,7 @@
 */
 
 /*
-	blitsort 1.1.5.4
+	blitsort 1.2.1.2
 */
 
 #ifndef BLITSORT_H
