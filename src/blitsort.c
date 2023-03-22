@@ -470,7 +470,7 @@ void FUNC(blit_partition)(VAR *array, VAR *swap, size_t swap_size, size_t nmemb,
 	}
 }
 
-void FUNC(blitsort)(VAR *array, size_t nmemb, CMPFUNC *cmp)
+void FUNC(blitsort)(void *array, size_t nmemb, CMPFUNC *cmp)
 {
 	if (nmemb <= 132)
 	{
@@ -478,6 +478,7 @@ void FUNC(blitsort)(VAR *array, size_t nmemb, CMPFUNC *cmp)
 	}
 	else
 	{
+		VAR *pta = (VAR *) array;
 #if BLIT_AUX
 		size_t swap_size = BLIT_AUX;
 #else
@@ -490,11 +491,11 @@ void FUNC(blitsort)(VAR *array, size_t nmemb, CMPFUNC *cmp)
 #endif
 		VAR swap[swap_size];
 
-		FUNC(blit_analyze)(array, swap, swap_size, nmemb, cmp);
+		FUNC(blit_analyze)(pta, swap, swap_size, nmemb, cmp);
 	}
 }
 
-void FUNC(blitsort_swap)(VAR *array, VAR *swap, size_t swap_size, size_t nmemb, CMPFUNC *cmp)
+void FUNC(blitsort_swap)(void *array, void *swap, size_t swap_size, size_t nmemb, CMPFUNC *cmp)
 {
 	if (nmemb <= 132)
 	{
@@ -502,7 +503,10 @@ void FUNC(blitsort_swap)(VAR *array, VAR *swap, size_t swap_size, size_t nmemb, 
 	}
 	else
 	{
-		FUNC(blit_analyze)(array, swap, swap_size, nmemb, cmp);
+		VAR *pta = (VAR *) array;
+		VAR *pts = (VAR *) swap;
+
+		FUNC(blit_analyze)(pta, pts, swap_size, nmemb, cmp);
 	}
 }
 

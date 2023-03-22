@@ -36,6 +36,7 @@
 #include <errno.h>
 #include <stdalign.h>
 #include <float.h>
+#include <string.h>
 
 typedef int CMPFUNC (const void *a, const void *b);
 
