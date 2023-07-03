@@ -353,10 +353,11 @@ size_t FUNC(blit_reverse_partition)(VAR *array, VAR *swap, VAR *piv, size_t swap
 
 		return l + r;
 	}
-	size_t cnt, val, m;
+#if !defined __clang__
+	size_t cnt, val, m = 0;
 	VAR *pta = array;
 
-	for (m = 0, cnt = nmemb / 4 ; cnt ; cnt--)
+	for (cnt = nmemb / 4 ; cnt ; cnt--)
 	{
 		val = cmp(piv, pta) > 0; swap[-m] = array[m] = *pta++; m += val; swap++;
 		val = cmp(piv, pta) > 0; swap[-m] = array[m] = *pta++; m += val; swap++;
@@ -368,8 +369,26 @@ size_t FUNC(blit_reverse_partition)(VAR *array, VAR *swap, VAR *piv, size_t swap
 	{
 		val = cmp(piv, pta) > 0; swap[-m] = array[m] = *pta++; m += val; swap++;
 	}
+	swap -= nmemb;
+#else
+	size_t cnt, m;
+	VAR *tmp, *ptx = array, *pta = array, *pts = swap;
 
-	memcpy(array + m, swap - nmemb, (nmemb - m) * sizeof(VAR));
+	for (cnt = nmemb / 4 ; cnt ; cnt--)
+	{
+		tmp = cmp(piv, ptx) > 0 ? pta++ : pts++; *tmp = *ptx++;
+		tmp = cmp(piv, ptx) > 0 ? pta++ : pts++; *tmp = *ptx++;
+		tmp = cmp(piv, ptx) > 0 ? pta++ : pts++; *tmp = *ptx++;
+		tmp = cmp(piv, ptx) > 0 ? pta++ : pts++; *tmp = *ptx++;
+	}
+
+	for (cnt = nmemb % 4 ; cnt ; cnt--)
+	{
+		tmp = cmp(piv, ptx) > 0 ? pta++ : pts++; *tmp = *ptx++;
+	}
+	m = pta - array;
+#endif
+	memcpy(array + m, swap, (nmemb - m) * sizeof(VAR));
 
 	return m;
 }
@@ -387,6 +406,7 @@ size_t FUNC(blit_default_partition)(VAR *array, VAR *swap, VAR *piv, size_t swap
 
 		return l + r;
 	}
+#if !defined __clang__
 	size_t cnt, val, m = 0;
 	VAR *pta = array;
 
@@ -402,8 +422,26 @@ size_t FUNC(blit_default_partition)(VAR *array, VAR *swap, VAR *piv, size_t swap
 	{
 		val = cmp(pta, piv) <= 0; swap[-m] = array[m] = *pta++; m += val; swap++;
 	}
+	swap -= nmemb;
+#else
+	size_t cnt, m;
+	VAR *tmp, *ptx = array, *pta = array, *pts = swap;
 
-	memcpy(array + m, swap - nmemb, sizeof(VAR) * (nmemb - m));
+	for (cnt = nmemb / 4 ; cnt ; cnt--)
+	{
+		tmp = cmp(ptx, piv) <= 0 ? pta++ : pts++; *tmp = *ptx++;
+		tmp = cmp(ptx, piv) <= 0 ? pta++ : pts++; *tmp = *ptx++;
+		tmp = cmp(ptx, piv) <= 0 ? pta++ : pts++; *tmp = *ptx++;
+		tmp = cmp(ptx, piv) <= 0 ? pta++ : pts++; *tmp = *ptx++;
+	}
+
+	for (cnt = nmemb % 4 ; cnt ; cnt--)
+	{
+		tmp = cmp(ptx, piv) <= 0 ? pta++ : pts++; *tmp = *ptx++;
+	}
+	m = pta - array;
+#endif	
+	memcpy(array + m, swap, sizeof(VAR) * (nmemb - m));
 
 	return m;
 }
